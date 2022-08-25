@@ -63,55 +63,11 @@ public class FilesStorageServiceImpl {
 public String save(MultipartFile file,String algo) {
 	Long idfile = null;
 	try {
-	    KeyGenerator keygenerator = KeyGenerator.getInstance("Blowfish");
-
-	    // create a key
-	    SecretKey cle = keygenerator.generateKey();
-	    System.out.println("cle (" + cle.getAlgorithm() + "," + cle.getFormat()
-        + ") : " + new String(cle.getEncoded()));
-	    String a=new String(cle.getEncoded());
-	    System.out.println("key=="+a);
+	  
 	   
 
 		 
-			UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
-                    .getPrincipal();
-			User u=userRepository.findByEmailIgnoreCase(userDetails.getUsername());
-			System.out.println("skon::"+userDetails.getUsername());
-			FileInfo ff=new FileInfo(file.getOriginalFilename(), u.getId());
-			ff.setAlgo(algo);
-			fileInfoRepository.save(ff);
-			System.out.println("azerty=="+ff.getId());
-			idfile=ff.getId();
-			String aa="uploads/"+u.getId()+"/"+ff.getId()+"/";
-			String bb="uploads/"+u.getId()+"/";
-			 Path uploadPath= Paths.get(aa);
-			 Path uploadPath1= Paths.get(bb);
-			 if (!Files.exists(uploadPath)) {
-		            Files.createDirectories(uploadPath);
-		        }
-			 Path filePath = uploadPath.resolve(file.getOriginalFilename());
-	      Files.copy(file.getInputStream(), filePath);
-	     
-	    //Use SHA-1 algorithm
-	      
-	     File f=new File(aa+"/"+file.getOriginalFilename());
-	     
-	   //Use SHA-1 algorithm
-	     MessageDigest shaDigest = MessageDigest.getInstance("SHA-256");
-	      
-	
-	     
-	     String shaChecksum = getFileChecksum(shaDigest, f);
-	     System.out.println("skon::"+shaChecksum);
-	      byte[] bytes = Files.readAllBytes(f.toPath());
-	     
-			KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
-		    keyPairGen.initialize(512, new SecureRandom());
-		    KeyPair keyPair = keyPairGen.generateKeyPair();
-		    AutomaticHash ah=new AutomaticHash();
-		    byte[] signatureBytes= ah.sign("SHA256withRSA", keyPair, bytes);
-
+			
 		  
 			 	
 		        String sftpPath = "/sftp_user";
@@ -131,6 +87,43 @@ public String save(MultipartFile file,String algo) {
 		            System.out.println("Connecting------");
 		            session.connect();
 		            System.out.println("Established Session");
+		            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+		                    .getPrincipal();
+					User u=userRepository.findByEmailIgnoreCase(userDetails.getUsername());
+					System.out.println("skon::"+userDetails.getUsername());
+					FileInfo ff=new FileInfo(file.getOriginalFilename(), u.getId());
+					ff.setAlgo(algo);
+					fileInfoRepository.save(ff);
+					System.out.println("azerty=="+ff.getId());
+					idfile=ff.getId();
+					String aa="uploads/"+u.getId()+"/"+ff.getId()+"/";
+					String bb="uploads/"+u.getId()+"/";
+					 Path uploadPath= Paths.get(aa);
+					 Path uploadPath1= Paths.get(bb);
+					 if (!Files.exists(uploadPath)) {
+				            Files.createDirectories(uploadPath);
+				        }
+					 Path filePath = uploadPath.resolve(file.getOriginalFilename());
+			      Files.copy(file.getInputStream(), filePath);
+			     
+			    //Use SHA-1 algorithm
+			      
+			     File f=new File(aa+"/"+file.getOriginalFilename());
+			     
+			   //Use SHA-1 algorithm
+			     MessageDigest shaDigest = MessageDigest.getInstance("SHA-256");
+			      
+			
+			     
+			     String shaChecksum = getFileChecksum(shaDigest, f);
+			     System.out.println("skon::"+shaChecksum);
+			      byte[] bytes = Files.readAllBytes(f.toPath());
+			     
+					KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
+				    keyPairGen.initialize(512, new SecureRandom());
+				    KeyPair keyPair = keyPairGen.generateKeyPair();
+				    AutomaticHash ah=new AutomaticHash();
+				    byte[] signatureBytes= ah.sign("SHA256withRSA", keyPair, bytes);
 
 		            Channel channel = session.openChannel("sftp");
 		            ChannelSftp sftpChannel = (ChannelSftp) channel;
