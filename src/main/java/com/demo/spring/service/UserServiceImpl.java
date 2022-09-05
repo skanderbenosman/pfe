@@ -57,4 +57,12 @@ public class UserServiceImpl implements UserService{
 		return  userRepository.save(user);
 	}
 
+	@Override
+	public User save3(User user) {
+		String password = PasswordUtil.getPasswordHash(user.getPassword());
+		user.setPassword(password);
+		
+		return userRepository.save(user);
+	}
+
 }

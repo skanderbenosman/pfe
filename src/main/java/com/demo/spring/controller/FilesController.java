@@ -88,6 +88,20 @@ public class FilesController {
   	      return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
   	    }
   	  }
+    @PostMapping("/delete2")
+    public ResponseEntity<ResponseMessage> deleteFile2(@RequestParam ("id") Long id) {
+  	    String message = "";
+  	    
+  	    try {
+  	    	
+  	      storageService.deletefile2(id);
+  	      message = "delete the file successfully";
+  	      return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+  	    } catch (Exception e) {
+  	      message = "Could not delete the file !";
+  	      return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+  	    }
+  	  }
     
       
   

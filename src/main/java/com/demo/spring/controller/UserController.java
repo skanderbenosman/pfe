@@ -1,13 +1,26 @@
 package com.demo.spring.controller;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +37,8 @@ import com.demo.spring.service.UserService;
 @RestController
 public class UserController {
 	
-	
+	 @Autowired
+	    public JavaMailSender emailSender;
 	@Autowired private UserService userService;
 	@Autowired private UserRepository userRepository;
 	@GetMapping(value="/users")
@@ -120,4 +134,44 @@ public class UserController {
 		return new ResponseEntity<Response>(new Response("user is updated"),HttpStatus.OK);
 		
 	}
+	 @PostMapping(value="/sendemail")
+	  	public ResponseEntity<Response> getemail(@RequestParam("email") String email) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+		 User user=userRepository.findByEmailIgnoreCase(email);
+		 if(user != null){
+			
+           
+ 	  SimpleMailMessage message = new SimpleMailMessage();
+       
+       message.setTo("mohamedskander.benosman@esprit.tn");
+       message.setSubject("Test Simple Email");
+       message.setText("http://localhost:4200/auth/resetpwd2/"+email);
+
+       // Send Message!
+       System.out.println(email);
+      
+       emailSender.send(message);
+
+       return new ResponseEntity<Response>(new Response("email sent"),HttpStatus.OK);}
+		 else{return new ResponseEntity<Response>(new Response("email not found"),HttpStatus.OK);}
+	  	 
+	  		
+	  	}
+	 @PostMapping(value="/resetpass")
+		public ResponseEntity<Response> update(@RequestParam("Email") String email,@RequestParam("Pwd") String pwd){
+		
+		 User user=userRepository.findByEmailIgnoreCase(email);
+			
+			
+			if(userRepository.findByEmailIgnoreCase(email)==null || email.equals(user.getEmail()) ){
+				System.out.println("d5al2");
+			
+				user.setPassword(pwd);
+				
+				User dbUser= userService.save3(user);
+				return new ResponseEntity<Response>(new Response("user is updated") ,HttpStatus.OK);
+			}
+			
+			return new ResponseEntity<Response>(new Response("user not saved") ,HttpStatus.OK);
+			
+		}
 	}

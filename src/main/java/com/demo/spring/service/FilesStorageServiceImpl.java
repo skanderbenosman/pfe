@@ -147,7 +147,7 @@ public String save(MultipartFile file,String algo) {
 		            byte[]    keyBytes  =Base64.getEncoder().encode(keyPair.getPublic().getEncoded());
 		            //System.out.println("Disconnected from sftp"+keyBytes);
 		            String Key=new String(keyBytes,"UTF-8");
-		            String aaaaasdqsd=Key.replace('+', '-').replace('/', '_');;
+		            String aaaaasdqsd=Key.replace('+', '-').replace('/', '_');
 		            
 		           
 		            byte[] signatureBytes2=Base64.getEncoder().encode(signatureBytes);
@@ -365,6 +365,50 @@ public int deletefile(Long id){
         session.connect();
         System.out.println(session.isConnected());
 
+        ChannelExec channel = (ChannelExec) session.openChannel("exec");
+        InputStream in = (InputStream) channel.getInputStream();
+       
+     
+        channel.setCommand( "sudo rm -r /home/skander/"+id);
+	  
+        ((ChannelExec) channel).setErrStream(System.err);
+
+        channel.connect();
+        BufferedReader reader= new BufferedReader(new InputStreamReader(in));
+        String line=null;
+        while((line = reader.readLine()) != null){
+        	 System.out.println("**"+line);
+        }
+        
+        System.out.println("**"+channel.getExitStatus());
+       return channel.getExitStatus();
+        
+       
+       
+
+    } catch(Exception e) {
+        e.printStackTrace();
+    }
+	return (Integer) null;
+}
+public int deletefile2(Long id){
+	String sftpHost = "192.168.1.104";
+    String sftpPort = "22";
+    String sftpUser = "skander";
+    String sftpPassword = "000000";
+
+    try{
+        /**
+         * Open session to sftp server
+         */
+        JSch jsch = new JSch();
+        Session session = jsch.getSession(sftpUser, sftpHost, Integer.valueOf(sftpPort));
+        session.setConfig("StrictHostKeyChecking", "no");
+        session.setPassword(sftpPassword);
+       
+        session.connect();
+        System.out.println(session.isConnected());
+        fileInfoRepository.deleteById(id);
         ChannelExec channel = (ChannelExec) session.openChannel("exec");
         InputStream in = (InputStream) channel.getInputStream();
        

@@ -23,7 +23,10 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,6 +37,7 @@ import com.demo.spring.ResponseMessage;
 
 @RestController
 public class KeyController {
+	  
 	  @GetMapping(value="/getBlowfishKey")
 	  	public String getKey(){
 	    	  KeyGenerator keygenerator;
@@ -166,4 +170,6 @@ public class KeyController {
 		  	 
 		  		
 		  	}
+	     
+	      
 }

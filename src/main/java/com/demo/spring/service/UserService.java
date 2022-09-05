@@ -9,6 +9,7 @@ public interface UserService {
 
 	User save(User user);
 	User save2(User user);
+	User save3(User user);
 
 	List<User> findALL();
 
