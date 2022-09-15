@@ -71,7 +71,7 @@ public String save(MultipartFile file,String algo) {
 		  
 			 	
 		        String sftpPath = "/sftp_user";
-		        String sftpHost = "192.168.1.101";
+		        String sftpHost = "20.111.53.151";
 		        String sftpPort = "22";
 		        String sftpUser = "sftp_user";
 		        String sftpPassword = "000000";
@@ -131,9 +131,7 @@ public String save(MultipartFile file,String algo) {
 
 		            System.out.println("Opened sftp Channel");
 
-		            /**
-		             * Do everything you need in sftp
-		             */
+		          
 		           
 		            sftpChannel.cd(sftpPath);
 		           
@@ -143,9 +141,9 @@ public String save(MultipartFile file,String algo) {
 		            System.out.println("Copied file to Host");
 		            String FilePath="/home/sftp_user/"+ff.getId()+"/"+ff.getName();
 		            String RepPath="/home/sftp_user/"+ff.getId();
-		           // Cyptage(FilePath,algo,RepPath,shaChecksum);
+		           
 		            byte[]    keyBytes  =Base64.getEncoder().encode(keyPair.getPublic().getEncoded());
-		            //System.out.println("Disconnected from sftp"+keyBytes);
+		          
 		            String Key=new String(keyBytes,"UTF-8");
 		            String aaaaasdqsd=Key.replace('+', '-').replace('/', '_');
 		            
@@ -164,9 +162,12 @@ public String save(MultipartFile file,String algo) {
 		            Files.delete(uploadPath);
 		            System.out.println( uploadPath);
 		            System.out.println( "file added");
-		            if(exit==0 || exit==-1){
+		            if(exit==0 || exit==-1 ){
 		            return "file added";}
-		            else{return "failed";}
+		            else{
+		            	fileInfoRepository.deleteById(idfile);
+		            	return "failed";
+		            }
 		            
 		            
 		        } catch(Exception e) {fileInfoRepository.deleteById(idfile);
@@ -198,7 +199,7 @@ public List<FileInfo> findFileUser() {
 	return ListFileUser;
 }
 public int Cyptage(String path,String algo,String pathrep,String shaChecksum,String aa,String bb){
-	String sftpHost = "192.168.1.101";
+	String sftpHost = "20.111.53.151";
     String sftpPort = "22";
     String sftpUser = "skander";
     String sftpPassword = "000000";
@@ -218,20 +219,11 @@ public int Cyptage(String path,String algo,String pathrep,String shaChecksum,Str
         ChannelExec channel = (ChannelExec) session.openChannel("exec");
         InputStream in = (InputStream) channel.getInputStream();
        
-        String a = "/home/sftp_user/137/azert.txt";
-        String b = "test";
-        KeyGenerator keygenerator = KeyGenerator.getInstance("Blowfish");
-
-	    // create a key
-	    SecretKey cle = keygenerator.generateKey();
-	   String passs=bytesToHex(cle.getEncoded());
-	    System.out
-        .println("cle=" + passs.toString()+algo);
-	    System.out.println("key=="+a);
-	    if(algo.equals("AES/BLOWFISH")){
-        channel.setCommand( "sudo /home/sftp_user/chiffrer.sh "+path+" "+pathrep+" "+shaChecksum+" "+aa+" "+bb);}
+       
+	    if(algo.equals("3DES/BLOWFISH")){
+        channel.setCommand( "sudo /home/sftp_user/test.sh "+path+" "+pathrep+" "+shaChecksum+" "+aa+" "+bb);}
 	    if(algo.equals("AES/DES")){
-	        channel.setCommand( "sudo /home/sftp_user/chiffrer2.sh "+path+" "+pathrep+" "+shaChecksum+" "+aa+" "+bb );}
+	        channel.setCommand( "sudo /home/sftp_user/test2.sh "+path+" "+pathrep+" "+shaChecksum+" "+aa+" "+bb );}
         System.out.println("azerty=="+path);
       
         ((ChannelExec) channel).setErrStream(System.err);
@@ -297,7 +289,7 @@ private static String getFileChecksum(MessageDigest digest, File file) throws IO
    return sb.toString();
 }
 public void Download(Long id){
-	String sftpHost = "192.168.1.104";
+	String sftpHost = "40.91.254.230";
     String sftpPort = "22";
     String sftpUser = "skander";
     String sftpPassword = "000000";
@@ -318,7 +310,7 @@ public void Download(Long id){
         InputStream in = (InputStream) channel.getInputStream();
         Optional<FileInfo> fileList=fileInfoRepository.findById(id);
         FileInfo f=fileList.get();
-        if(f.getAlgo().equals("AES/BLOWFISH")){
+        if(f.getAlgo().equals("3DES/BLOWFISH")){
         	channel.setCommand( "sudo /home/sftp_user/dechiffrer.sh "+id+" "+f.getName() );}
     	    if(f.getAlgo().equals("AES/DES")){
     	    	channel.setCommand( "sudo /home/sftp_user/dechiffrer2.sh "+id+" "+f.getName() );}
@@ -348,7 +340,7 @@ public void Download(Long id){
     }
 }
 public int deletefile(Long id){
-	String sftpHost = "192.168.1.104";
+	String sftpHost = "40.91.254.230";
     String sftpPort = "22";
     String sftpUser = "skander";
     String sftpPassword = "000000";
@@ -392,7 +384,7 @@ public int deletefile(Long id){
 	return (Integer) null;
 }
 public int deletefile2(Long id){
-	String sftpHost = "192.168.1.104";
+	String sftpHost = "40.91.254.230";
     String sftpPort = "22";
     String sftpUser = "skander";
     String sftpPassword = "000000";
@@ -425,6 +417,51 @@ public int deletefile2(Long id){
         }
         
         System.out.println("**"+channel.getExitStatus());
+       return channel.getExitStatus();
+        
+       
+       
+
+    } catch(Exception e) {
+        e.printStackTrace();
+    }
+	return (Integer) null;
+}
+public int deletefile3(Long id){
+	String sftpHost = "20.229.81.43";
+    String sftpPort = "22";
+    String sftpUser = "skander";
+    String sftpPassword = "000000";
+
+    try{
+        /**
+         * Open session to sftp server
+         */
+        JSch jsch = new JSch();
+        Session session = jsch.getSession(sftpUser, sftpHost, Integer.valueOf(sftpPort));
+        session.setConfig("StrictHostKeyChecking", "no");
+        session.setPassword(sftpPassword);
+       
+        session.connect();
+        System.out.println(session.isConnected());
+       
+        ChannelExec channel = (ChannelExec) session.openChannel("exec");
+        InputStream in = (InputStream) channel.getInputStream();
+       
+     
+        channel.setCommand( "sudo rm -r /home/sftp_user/"+id);
+	  
+        ((ChannelExec) channel).setErrStream(System.err);
+
+        channel.connect();
+        BufferedReader reader= new BufferedReader(new InputStreamReader(in));
+        String line=null;
+        while((line = reader.readLine()) != null){
+        	 System.out.println("**"+line);
+        }
+        
+        System.out.println("**"+channel.getExitStatus());
+        fileInfoRepository.deleteById(id);
        return channel.getExitStatus();
         
        

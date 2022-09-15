@@ -12,6 +12,7 @@ public interface UserService {
 	User save3(User user);
 
 	List<User> findALL();
+	
 
 	User getUserByEmail(String name);
 

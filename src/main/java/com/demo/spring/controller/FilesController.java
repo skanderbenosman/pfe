@@ -94,7 +94,7 @@ public class FilesController {
   	    
   	    try {
   	    	
-  	      storageService.deletefile2(id);
+  	      storageService.deletefile3(id);
   	      message = "delete the file successfully";
   	      return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
   	    } catch (Exception e) {

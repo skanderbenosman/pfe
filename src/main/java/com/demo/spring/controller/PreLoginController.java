@@ -2,9 +2,11 @@ package com.demo.spring.controller;
 
 
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +16,7 @@ import com.demo.spring.domain.Response;
 import com.demo.spring.model.User;
 import com.demo.spring.repository.UserRepository;
 import com.demo.spring.service.UserService;
-
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class PreLoginController {
 	@Autowired private UserService userService;
@@ -32,6 +34,8 @@ public class PreLoginController {
 		user.setPhoneNumber(phone);
 		user.setRole("USER");
 		user.setEanbled(true);
+		user.setResetpwdtoken(RandomStringUtils.random(100, true, true));
+		user.setImageName(file.getOriginalFilename());
 		User dbUser= userService.save(user);
 		if(dbUser!=null){
 			try {

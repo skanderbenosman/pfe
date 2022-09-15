@@ -12,6 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 
+/**
+ * @author skander
+ *
+ */
 @Entity
 @Table(name="user")
 public class User implements Serializable {
@@ -39,7 +43,10 @@ private boolean eanbled;
 private String phoneNumber;
 @Column(name="createdDate")
 private Date createdDate;
-
+@Column(name="imageName")
+private String imageName;
+@Column(name="resetpwdtoken")
+private String resetpwdtoken;
 
 
 public Long getId() {
@@ -97,6 +104,18 @@ public boolean isEanbled() {
 }
 public void setEanbled(boolean eanbled) {
 	this.eanbled = eanbled;
+}
+public String getImageName() {
+	return imageName;
+}
+public void setImageName(String imageName) {
+	this.imageName = imageName;
+}
+public String getResetpwdtoken() {
+	return resetpwdtoken;
+}
+public void setResetpwdtoken(String resetpwdtoken) {
+	this.resetpwdtoken = resetpwdtoken;
 }
 
 

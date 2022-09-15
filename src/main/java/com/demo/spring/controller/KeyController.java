@@ -12,6 +12,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
@@ -19,9 +20,11 @@ import java.util.Base64;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -153,23 +156,237 @@ public class KeyController {
 	    	  System.out.println("caaa"+signature);
 				return aaaa;
 	      }
-	      @GetMapping(value="/getRSAKey1")
-		  	public void getKey6() throws NoSuchAlgorithmException, InvalidKeySpecException{
-	    	  String publicKeyB64 = "MIIBITANBgkqhkiG9w0BAQEFAAOCAQ4AMIIBCQKCAQBV8xakN/wOsB6qHpyMigk/5PrSxxd6tKTJsyMIq5f9npzZue0mI4H2o8toYImtRk6VHhcldo0t7UwsQXmFMk7D"
-	    	            + "i3C53Xwfk7yEFSkXGpdtp/7fbqNnjVoJl/EPcgoDsTPrHYF/HgtmbhzuYvYeY1zpV0d2uYpFxAuqkE9FreuuH0iI8xODFe5NzRevXH116elwdCGINeAecHKgiWe"
-	    	            + "bGpRPml0lagrfi0qoQvNScmi/WIN2nFcI3sQFCq3HNYDBKDhO0AEKPB2FjvoEheJJwTs5URCYsJglYyxEUon3w6KuhVa+hzYJUAgNTCsrAhQCUlX4+5LOGlwI5gonm1DYvJJZAgMBAAEB";
-	    	    byte[] decoded = Base64.getDecoder().decode(publicKeyB64);
-	    	    X509EncodedKeySpec spec =
-	    	            new X509EncodedKeySpec(decoded);
-	    	    KeyFactory kf = KeyFactory.getInstance("RSA");
-	    	    RSAPublicKey generatePublic = (RSAPublicKey) kf.generatePublic(spec);
-	    	    BigInteger modulus = generatePublic.getModulus();
-	    	    System.out.println(modulus);
-	    	    BigInteger exponent = generatePublic.getPublicExponent();
-	    	    System.out.println(exponent);
-		  	 
+	  	@PostMapping(value="/AESsec")
+		public String generateAesKey(@RequestParam(value = "param1", required = false)String pubkeyreciv) throws NoSuchAlgorithmException {
+
+		  	KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("DH");
+	    keyPairGen.initialize(512);
+	    KeyPair keyPair = keyPairGen.generateKeyPair();
+	    PrivateKey privateKey=keyPair.getPrivate();
+	    PublicKey  publicKey=keyPair.getPublic();
+	        try {
+	            final KeyAgreement keyAgreement = KeyAgreement.getInstance("DH");
+	            keyAgreement.init(privateKey);
+	            PublicKey recpub=getPublicKey(pubkeyreciv);
+	            keyAgreement.doPhase(recpub, true);
+
+	            byte[] secretKey = shortenSecretKey(keyAgreement.generateSecret());
+	            System.out.println("1=="+Base64.getEncoder().encodeToString(secretKey));
+	            System.out.println(Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()));
+	            String bb=Base64.getEncoder().encodeToString(secretKey);
+	         
+	  	      	  KeyGenerator keygenerator;
+		  			keygenerator = KeyGenerator.getInstance("AES");
+		  			 SecretKey cle = keygenerator.generateKey();
+		  			 String aeskey= Base64.getUrlEncoder().encodeToString(cle.getEncoded());
+		  			 final SecretKeySpec keySpec = new SecretKeySpec(secretKey, "DES");
+			            final Cipher        cipher  = Cipher.getInstance("DES/ECB/PKCS5Padding");
+
+			            cipher.init(Cipher.ENCRYPT_MODE, keySpec);
+
+			            final byte[] encryptedMessage = cipher.doFinal(aeskey.getBytes());
+			            String encryptedMessagestring= Base64.getUrlEncoder().encodeToString(encryptedMessage);
+			            String pubkey= Base64.getUrlEncoder().encodeToString(publicKey.getEncoded());
+			            System.out.println("msg="+encryptedMessagestring);
+		  			 System.out.println("aes=="+aeskey);
 		  		
-		  	}
+	            return pubkey+" "+encryptedMessagestring;
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+			return null;
+	    }
+	  	@PostMapping(value="/BLOsec")
+		public String generateBlowfishKey(@RequestParam(value = "param1", required = false)String pubkeyreciv) throws NoSuchAlgorithmException {
+
+		  	KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("DH");
+	    keyPairGen.initialize(512);
+	    KeyPair keyPair = keyPairGen.generateKeyPair();
+	    PrivateKey privateKey=keyPair.getPrivate();
+	    PublicKey  publicKey=keyPair.getPublic();
+	        try {
+	            final KeyAgreement keyAgreement = KeyAgreement.getInstance("DH");
+	            keyAgreement.init(privateKey);
+	            PublicKey recpub=getPublicKey(pubkeyreciv);
+	            keyAgreement.doPhase(recpub, true);
+
+	            byte[] secretKey = shortenSecretKey(keyAgreement.generateSecret());
+	            System.out.println("1=="+Base64.getEncoder().encodeToString(secretKey));
+	            System.out.println(Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()));
+	            String bb=Base64.getEncoder().encodeToString(secretKey);
+	         
+	  	      	  KeyGenerator keygenerator;
+		  			keygenerator = KeyGenerator.getInstance("Blowfish");
+		  			 SecretKey cle = keygenerator.generateKey();
+		  			 String aeskey= Base64.getUrlEncoder().encodeToString(cle.getEncoded());
+		  			 final SecretKeySpec keySpec = new SecretKeySpec(secretKey, "DES");
+			            final Cipher        cipher  = Cipher.getInstance("DES/ECB/PKCS5Padding");
+
+			            cipher.init(Cipher.ENCRYPT_MODE, keySpec);
+
+			            final byte[] encryptedMessage = cipher.doFinal(aeskey.getBytes());
+			            String encryptedMessagestring= Base64.getUrlEncoder().encodeToString(encryptedMessage);
+			            String pubkey= Base64.getUrlEncoder().encodeToString(publicKey.getEncoded());
+			            System.out.println("msg="+encryptedMessagestring);
+		  			 System.out.println("aes=="+aeskey);
+		  		
+	            return pubkey+" "+encryptedMessagestring;
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+			return null;
+	    }
+	  	@PostMapping(value="/3Dessec")
+		public String generate3DeshKey(@RequestParam(value = "param1", required = false)String pubkeyreciv) throws NoSuchAlgorithmException {
+
+		  	KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("DH");
+	    keyPairGen.initialize(512);
+	    KeyPair keyPair = keyPairGen.generateKeyPair();
+	    PrivateKey privateKey=keyPair.getPrivate();
+	    PublicKey  publicKey=keyPair.getPublic();
+	        try {
+	            final KeyAgreement keyAgreement = KeyAgreement.getInstance("DH");
+	            keyAgreement.init(privateKey);
+	            PublicKey recpub=getPublicKey(pubkeyreciv);
+	            keyAgreement.doPhase(recpub, true);
+
+	            byte[] secretKey = shortenSecretKey(keyAgreement.generateSecret());
+	            System.out.println("1=="+Base64.getEncoder().encodeToString(secretKey));
+	            System.out.println(Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()));
+	            String bb=Base64.getEncoder().encodeToString(secretKey);
+	         
+	  	      	  KeyGenerator keygenerator;
+		  			keygenerator = KeyGenerator.getInstance("TripleDES");
+		  			 SecretKey cle = keygenerator.generateKey();
+		  			 String aeskey= Base64.getUrlEncoder().encodeToString(cle.getEncoded());
+		  			 final SecretKeySpec keySpec = new SecretKeySpec(secretKey, "DES");
+			            final Cipher        cipher  = Cipher.getInstance("DES/ECB/PKCS5Padding");
+
+			            cipher.init(Cipher.ENCRYPT_MODE, keySpec);
+
+			            final byte[] encryptedMessage = cipher.doFinal(aeskey.getBytes());
+			            String encryptedMessagestring= Base64.getUrlEncoder().encodeToString(encryptedMessage);
+			            String pubkey= Base64.getUrlEncoder().encodeToString(publicKey.getEncoded());
+			            System.out.println("msg="+encryptedMessagestring);
+		  			 System.out.println("aes=="+aeskey);
+		  		
+	            return pubkey+" "+encryptedMessagestring;
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+			return null;
+	    }
+	 	@PostMapping(value="/Dessec")
+			public String generateDeshKey(@RequestParam(value = "param1", required = false)String pubkeyreciv) throws NoSuchAlgorithmException {
+
+			  	KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("DH");
+		    keyPairGen.initialize(512);
+		    KeyPair keyPair = keyPairGen.generateKeyPair();
+		    PrivateKey privateKey=keyPair.getPrivate();
+		    PublicKey  publicKey=keyPair.getPublic();
+		        try {
+		            final KeyAgreement keyAgreement = KeyAgreement.getInstance("DH");
+		            keyAgreement.init(privateKey);
+		            PublicKey recpub=getPublicKey(pubkeyreciv);
+		            keyAgreement.doPhase(recpub, true);
+
+		            byte[] secretKey = shortenSecretKey(keyAgreement.generateSecret());
+		            System.out.println("1=="+Base64.getEncoder().encodeToString(secretKey));
+		            System.out.println(Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()));
+		            String bb=Base64.getEncoder().encodeToString(secretKey);
+		         
+		  	      	  KeyGenerator keygenerator;
+			  			keygenerator = KeyGenerator.getInstance("DES");
+			  			 SecretKey cle = keygenerator.generateKey();
+			  			 String aeskey= Base64.getUrlEncoder().encodeToString(cle.getEncoded());
+			  			 final SecretKeySpec keySpec = new SecretKeySpec(secretKey, "DES");
+				            final Cipher        cipher  = Cipher.getInstance("DES/ECB/PKCS5Padding");
+
+				            cipher.init(Cipher.ENCRYPT_MODE, keySpec);
+
+				            final byte[] encryptedMessage = cipher.doFinal(aeskey.getBytes());
+				            String encryptedMessagestring= Base64.getUrlEncoder().encodeToString(encryptedMessage);
+				            String pubkey= Base64.getUrlEncoder().encodeToString(publicKey.getEncoded());
+				            System.out.println("msg="+encryptedMessagestring);
+			  			 System.out.println("aes=="+aeskey);
+			  		
+		            return pubkey+" "+encryptedMessagestring;
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+				return null;
+		    }
+		     
 	     
-	      
+	  	 public  PrivateKey getPrivateKey(String privateK) {
+			  PrivateKey prvKey = null;
+			  try {
+			 
+			  byte[] privateBytes = Base64.getUrlDecoder().decode(privateK);
+			  PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateBytes);
+			  KeyFactory keyFactory = KeyFactory.getInstance("DH");
+			  prvKey = keyFactory.generatePrivate(keySpec);
+			  } catch (Exception ex) {
+			  ex.printStackTrace();
+			  }
+			  System.out.println("PRIVkey=="+prvKey);
+			  return prvKey;
+			  }
+		  public  PublicKey getPublicKey(String publicK) {
+			  PublicKey pubKey = null;
+			  try {
+			  
+			  byte[] publicBytes = Base64.getUrlDecoder().decode(publicK);
+			  X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicBytes);
+			  KeyFactory keyFactory = KeyFactory.getInstance("DH");
+			  pubKey = keyFactory.generatePublic(keySpec);
+			  } catch (Exception ex) {
+			  ex.printStackTrace();
+			  }
+			  return pubKey;
+			  }
+		  
+		  private byte[] shortenSecretKey(final byte[] longKey) {
+
+		        try {
+
+		            // Use 8 bytes (64 bits) for DES, 6 bytes (48 bits) for Blowfish
+		            final byte[] shortenedKey = new byte[8];
+
+		            System.arraycopy(longKey, 0, shortenedKey, 0, shortenedKey.length);
+
+		            return shortenedKey;
+
+		            // Below lines can be more secure
+		            //final SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
+		            // final DESKeySpec       desSpec    = new DESKeySpec(longKey);
+		            //
+		            // return keyFactory.generateSecret(desSpec).getEncoded();
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+
+		  	        return null;
+		 
+	} 
+			@GetMapping(value="/keys")
+			public String generateKeys() {
+
+		        try {
+		        	 
+		            final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("DH");
+		            keyPairGenerator.initialize(512);
+
+		            final KeyPair keyPair = keyPairGenerator.generateKeyPair();
+
+		            String priv=Base64.getUrlEncoder().encodeToString(keyPair.getPrivate().getEncoded());
+		            String pub=Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded());
+		            
+		            return priv+" "+pub;
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+				return null;
+		    }
+		
 }
