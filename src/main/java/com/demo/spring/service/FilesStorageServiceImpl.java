@@ -71,7 +71,7 @@ public String save(MultipartFile file,String algo) {
 		  
 			 	
 		        String sftpPath = "/sftp_user";
-		        String sftpHost = "20.111.53.151";
+		        String sftpHost = "20.16.40.66";
 		        String sftpPort = "22";
 		        String sftpUser = "sftp_user";
 		        String sftpPassword = "000000";
@@ -199,7 +199,7 @@ public List<FileInfo> findFileUser() {
 	return ListFileUser;
 }
 public int Cyptage(String path,String algo,String pathrep,String shaChecksum,String aa,String bb){
-	String sftpHost = "20.111.53.151";
+	String sftpHost = "20.16.40.66";
     String sftpPort = "22";
     String sftpUser = "skander";
     String sftpPassword = "000000";
