@@ -159,7 +159,7 @@ public class UserController {
        
        message.setTo(email);
        message.setSubject("Test Simple Email");
-       message.setText("http://localhost:4200/auth/resetpwd2/"+user.getResetpwdtoken());
+       message.setText("https://pfe-front-end.herokuapp.com/auth/resetpwd2/"+user.getResetpwdtoken());
 
        // Send Message!
        System.out.println(email);
