@@ -12,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +22,7 @@ import com.demo.spring.domain.UserDTO;
 import com.demo.spring.model.User;
 import com.demo.spring.security.JwtTokenUtil;
 import com.demo.spring.security.JwtUser;
-
+@CrossOrigin(origins = "https://pfe-front-end.herokuapp.com/")
 @RestController
 public class AuthenticationController {
 	@Value("${jwt.header}")

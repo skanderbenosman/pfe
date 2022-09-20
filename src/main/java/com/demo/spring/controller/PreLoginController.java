@@ -16,7 +16,7 @@ import com.demo.spring.domain.Response;
 import com.demo.spring.model.User;
 import com.demo.spring.repository.UserRepository;
 import com.demo.spring.service.UserService;
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://pfe-front-end.herokuapp.com/")
 @RestController
 public class PreLoginController {
 	@Autowired private UserService userService;
