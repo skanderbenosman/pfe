@@ -90,10 +90,10 @@ public class ImageUploadController {
 	}
 	
 	
-	@GetMapping(path = { "/getaaa" })
-	public ResponseEntity<ByteArrayResource> getImage() throws Exception {
-		Long a=(long) 1;
-	final Optional<ImageModel> retrievedImage = imageRepository.findById(a);
+	@GetMapping(path = { "/getaaa/{id}" })
+	public ResponseEntity<ByteArrayResource> getImage(@PathVariable("id") long id) throws Exception {
+		
+	final Optional<ImageModel> retrievedImage = imageRepository.findByIduser(id);
 	ImageModel img = new ImageModel(retrievedImage.get().getName(),
 	retrievedImage.get().getType(),retrievedImage.get().getIduser(),
 	retrievedImage.get().getPicByte());

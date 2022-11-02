@@ -12,5 +12,6 @@ public interface ImageRepository extends JpaRepository<ImageModel, Long> {
 
     Optional<ImageModel> findByName(String name);
     Optional<ImageModel> findById(Long id);
+    Optional<ImageModel> findByIduser(Long id);
 
 }

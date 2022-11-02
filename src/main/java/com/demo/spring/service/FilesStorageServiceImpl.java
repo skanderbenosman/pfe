@@ -289,7 +289,7 @@ private static String getFileChecksum(MessageDigest digest, File file) throws IO
    return sb.toString();
 }
 public void Download(Long id){
-	String sftpHost = "192.168.1.104";
+	String sftpHost = "213.199.135.92";
     String sftpPort = "22";
     String sftpUser = "skander";
     String sftpPassword = "000000";
@@ -340,7 +340,7 @@ public void Download(Long id){
     }
 }
 public int deletefile(Long id){
-	String sftpHost = "192.168.1.104";
+	String sftpHost = "213.199.135.92";
     String sftpPort = "22";
     String sftpUser = "skander";
     String sftpPassword = "000000";
@@ -384,7 +384,7 @@ public int deletefile(Long id){
 	return (Integer) null;
 }
 public int deletefile2(Long id){
-	String sftpHost = "192.168.1.104";
+	String sftpHost = "213.199.135.92";
     String sftpPort = "22";
     String sftpUser = "skander";
     String sftpPassword = "000000";
