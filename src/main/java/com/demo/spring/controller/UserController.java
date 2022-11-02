@@ -194,5 +194,60 @@ public class UserController {
 		 File f = new File("/uploads2/606/cc.png");
 		 return f;
 	 }
-	
+	 @PreAuthorize("hasRole('ADMIN')")
+	 @GetMapping(value="/Userstats")
+		public List<Integer> Userstats(){
+		 Date d = new Date();
+		 List<Integer> ScoreList = new ArrayList<Integer>();
+		 List<User> users = userService.findALL();
+		 for (int j = 0; j < 12; j++) {
+			 int i=0;
+		 for(User u: users){
+				if( u.getCreatedDate().getYear()==d.getYear() && u.getCreatedDate().getMonth()==j){
+				i=i+1;
+			}}
+		 ScoreList.add(i);
+		 }
+		return ScoreList;
+	 }
+	 @PreAuthorize("hasRole('ADMIN')")
+	 @GetMapping(value="/Userstats2")
+		public List<Integer> Userstats2(){
+		 Date d = new Date();
+		 List<Integer> ScoreList = new ArrayList<Integer>();
+		 List<User> users = userService.findALL();
+		 for (int j = 0; j < 12; j++) {
+			 int i=0;
+		 for(User u: users){
+				if( u.getCreatedDate().getYear()==d.getYear()-1 && u.getCreatedDate().getMonth()==j){
+				i=i+1;
+			}}
+		 ScoreList.add(i);
+		 }
+		 return ScoreList;
+	 }
+	 @GetMapping(value="/nbusersactive")	
+		public int getNBusersactive(){
+			List<User> users = userService.findALL();
+			int i=0;
+			
+			for(User u: users){
+				if(u.isEanbled()==true){
+					i=i+1;}
+				}
+			return i;
+			
+		}
+	 @GetMapping(value="/nbusersbaned")	
+		public int getNBusersbaned(){
+			List<User> users = userService.findALL();
+			int i=0;
+			
+			for(User u: users){
+				if(u.isEanbled()==false){
+				i=i+1;}
+			}
+			return i;
+			
+		}
 	}

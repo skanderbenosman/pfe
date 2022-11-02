@@ -71,7 +71,7 @@ public String save(MultipartFile file,String algo) {
 		  
 			 	
 		        String sftpPath = "/sftp_user";
-		        String sftpHost = "20.16.40.66";
+		        String sftpHost = "51.124.210.200";
 		        String sftpPort = "22";
 		        String sftpUser = "sftp_user";
 		        String sftpPassword = "000000";
@@ -199,7 +199,7 @@ public List<FileInfo> findFileUser() {
 	return ListFileUser;
 }
 public int Cyptage(String path,String algo,String pathrep,String shaChecksum,String aa,String bb){
-	String sftpHost = "20.16.40.66";
+	String sftpHost = "51.124.210.200";
     String sftpPort = "22";
     String sftpUser = "skander";
     String sftpPassword = "000000";
@@ -221,9 +221,9 @@ public int Cyptage(String path,String algo,String pathrep,String shaChecksum,Str
        
        
 	    if(algo.equals("3DES/BLOWFISH")){
-        channel.setCommand( "sudo /home/sftp_user/test.sh "+path+" "+pathrep+" "+shaChecksum+" "+aa+" "+bb);}
+        channel.setCommand( "sudo /home/sftp_user/chiff1.sh "+path+" "+pathrep+" "+shaChecksum+" "+aa+" "+bb);}
 	    if(algo.equals("AES/DES")){
-	        channel.setCommand( "sudo /home/sftp_user/test2.sh "+path+" "+pathrep+" "+shaChecksum+" "+aa+" "+bb );}
+	        channel.setCommand( "sudo /home/sftp_user/chiff2.sh "+path+" "+pathrep+" "+shaChecksum+" "+aa+" "+bb );}
         System.out.println("azerty=="+path);
       
         ((ChannelExec) channel).setErrStream(System.err);
@@ -289,7 +289,7 @@ private static String getFileChecksum(MessageDigest digest, File file) throws IO
    return sb.toString();
 }
 public void Download(Long id){
-	String sftpHost = "137.117.143.174";
+	String sftpHost = "192.168.1.104";
     String sftpPort = "22";
     String sftpUser = "skander";
     String sftpPassword = "000000";
@@ -340,7 +340,7 @@ public void Download(Long id){
     }
 }
 public int deletefile(Long id){
-	String sftpHost = "137.117.143.174";
+	String sftpHost = "192.168.1.104";
     String sftpPort = "22";
     String sftpUser = "skander";
     String sftpPassword = "000000";
@@ -361,7 +361,7 @@ public int deletefile(Long id){
         InputStream in = (InputStream) channel.getInputStream();
        
      
-        channel.setCommand( "sudo rm -r /home/skander/"+id);
+        channel.setCommand( "sudo rm -r /home/skander/"+id+" /var/www/vm7.westeurope.cloudapp.azure.com/"+id);
 	  
         ((ChannelExec) channel).setErrStream(System.err);
 
@@ -384,7 +384,7 @@ public int deletefile(Long id){
 	return (Integer) null;
 }
 public int deletefile2(Long id){
-	String sftpHost = "137.117.143.174";
+	String sftpHost = "192.168.1.104";
     String sftpPort = "22";
     String sftpUser = "skander";
     String sftpPassword = "000000";
@@ -428,7 +428,7 @@ public int deletefile2(Long id){
 	return (Integer) null;
 }
 public int deletefile3(Long id){
-	String sftpHost = "20.229.81.43";
+	String sftpHost = "20.234.164.108";
     String sftpPort = "22";
     String sftpUser = "skander";
     String sftpPassword = "000000";

@@ -4,12 +4,15 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -388,5 +391,28 @@ public class KeyController {
 		        }
 				return null;
 		    }
-		
+		      @GetMapping(value="/getAESKey9")
+		    	public String getKey22() throws NoSuchProviderException{
+		      	  KeyGenerator keygenerator;
+		      
+		  		try {
+		  		
+		  			keygenerator = KeyGenerator.getInstance("RC2");
+		  			SecureRandom secureRandom = new SecureRandom();
+		  			int keyBitSize = 256;
+
+		  			keygenerator.init(keyBitSize, secureRandom);
+		  			 SecretKey cle = keygenerator.generateKey();
+		  			 return bytesToHex(cle.getEncoded());
+		  		} catch (NoSuchAlgorithmException e) {
+		  			// TODO Auto-generated catch block
+		  			e.printStackTrace();
+		  		}
+
+		    	   return null;
+		    	   
+		    	  
+		    	 
+		    		
+		    	}
 }
