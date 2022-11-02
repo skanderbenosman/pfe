@@ -361,7 +361,7 @@ public int deletefile(Long id){
         InputStream in = (InputStream) channel.getInputStream();
        
      
-        channel.setCommand( "sudo rm -r /home/skander/"+id+" /var/www/vm7.westeurope.cloudapp.azure.com/"+id);
+        channel.setCommand( "sudo rm -r /home/skander/"+id+" /var/www/vm3.westeurope.cloudapp.azure.com/"+id);
 	  
         ((ChannelExec) channel).setErrStream(System.err);
 
