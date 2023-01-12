@@ -29,6 +29,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -67,6 +68,7 @@ public class KeyController {
 	      	  KeyGenerator keygenerator;
 	  		try {
 	  			keygenerator = KeyGenerator.getInstance("AES");
+	  			
 	  			 SecretKey cle = keygenerator.generateKey();
 	  			 return bytesToHex(cle.getEncoded());
 	  		} catch (NoSuchAlgorithmException e) {
@@ -392,12 +394,28 @@ public class KeyController {
 				return null;
 		    }
 		      @GetMapping(value="/getAESKey9")
-		    	public String getKey22() throws NoSuchProviderException{
+		    	public String getKey22() throws NoSuchProviderException, NoSuchPaddingException{
+		      	  KeyGenerator keygenerator;
+		      
+		  		JCEKeyGenerator aa=new JCEKeyGenerator("aria", 256, new CipherKeyGenerator());
+				SecretKey cleasd=aa.engineGenerateKey();
+				System.out.println(bytesToHex(cleasd.getEncoded()));
+				
+
+				
+				 
+				 return bytesToHex(cleasd.getEncoded());
+		    	  
+		    	 
+		    		
+		    	}
+		      @GetMapping(value="/getAESKey93")
+		    	public String getKey223() throws NoSuchProviderException{
 		      	  KeyGenerator keygenerator;
 		      
 		  		try {
 		  		
-		  			keygenerator = KeyGenerator.getInstance("RC2");
+		  			keygenerator = KeyGenerator.getInstance("Blowfish");
 		  			SecureRandom secureRandom = new SecureRandom();
 		  			int keyBitSize = 256;
 
