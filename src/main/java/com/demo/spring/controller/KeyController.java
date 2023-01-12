@@ -45,85 +45,7 @@ import com.demo.spring.ResponseMessage;
 @RestController
 public class KeyController {
 	  
-	  @GetMapping(value="/getBlowfishKey")
-	  	public String getKey(){
-	    	  KeyGenerator keygenerator;
-			try {
-				keygenerator = KeyGenerator.getInstance("Blowfish");
-				 SecretKey cle = keygenerator.generateKey();
-				 return bytesToHex(cle.getEncoded());
-			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-	  	   return null;
-	  	   
-	  	  
-	  	 
-	  		
-	  	}
-	      @GetMapping(value="/getAESKey")
-	    	public String getKey2(){
-	      	  KeyGenerator keygenerator;
-	  		try {
-	  			keygenerator = KeyGenerator.getInstance("AES");
-	  			
-	  			 SecretKey cle = keygenerator.generateKey();
-	  			 return bytesToHex(cle.getEncoded());
-	  		} catch (NoSuchAlgorithmException e) {
-	  			// TODO Auto-generated catch block
-	  			e.printStackTrace();
-	  		}
-
-	    	   return null;
-	    	   
-	    	  
-	    	 
-	    		
-	    	}
-	      @GetMapping(value="/getDESKey")
-	  	public String getKey3(){
-	    	  KeyGenerator keygenerator;
-			try {
-				keygenerator = KeyGenerator.getInstance("DES");
-				 SecretKey cle = keygenerator.generateKey();
-				 return bytesToHex(cle.getEncoded());
-			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-	  	   return null;
-	  	   	
-	  	}
-	      @GetMapping(value="/getRSAKey")
-		  	public String getKey5(){
-		    	  
-				try {
-					KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-					generator.initialize(512);
-					KeyPair pair = generator.generateKeyPair();
-					PrivateKey privateKey = pair.getPrivate();
-					PublicKey publicKey = pair.getPublic();
-					String pubkey=bytesToHex(publicKey.getEncoded());
-					String prikey=bytesToHex(privateKey.getEncoded());
-					String keypair= pubkey+"--"+prikey;
-					for (String s: keypair.split("--")) {
-				         System.out.println(s);
-				      }
-					 return prikey;
-				} catch (NoSuchAlgorithmException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-		  	   return null;
-		  	   
-		  	  
-		  	 
-		  		
-		  	}
+	 
 	      public static String bytesToHex(byte[] bytes) {
 	    	    StringBuilder sb = new StringBuilder();
 	    	    for (byte hashByte : bytes) {
@@ -241,7 +163,7 @@ public class KeyController {
 	        }
 			return null;
 	    }
-	  	@PostMapping(value="/3Dessec")
+	  	@PostMapping(value="/Aria")
 		public String generate3DeshKey(@RequestParam(value = "param1", required = false)String pubkeyreciv) throws NoSuchAlgorithmException {
 
 		  	KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("DH");
@@ -259,10 +181,11 @@ public class KeyController {
 	            System.out.println("1=="+Base64.getEncoder().encodeToString(secretKey));
 	            System.out.println(Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()));
 	            String bb=Base64.getEncoder().encodeToString(secretKey);
-	         
-	  	      	  KeyGenerator keygenerator;
-		  			keygenerator = KeyGenerator.getInstance("TripleDES");
-		  			 SecretKey cle = keygenerator.generateKey();
+	            KeyGenerator keygenerator;
+			      
+		  		JCEKeyGenerator aa=new JCEKeyGenerator("aria", 256, new CipherKeyGenerator());
+				SecretKey cle=aa.engineGenerateKey();
+	  	      	 
 		  			 String aeskey= Base64.getUrlEncoder().encodeToString(cle.getEncoded());
 		  			 final SecretKeySpec keySpec = new SecretKeySpec(secretKey, "DES");
 			            final Cipher        cipher  = Cipher.getInstance("DES/ECB/PKCS5Padding");
@@ -300,9 +223,10 @@ public class KeyController {
 		            System.out.println(Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()));
 		            String bb=Base64.getEncoder().encodeToString(secretKey);
 		         
-		  	      	  KeyGenerator keygenerator;
-			  			keygenerator = KeyGenerator.getInstance("DES");
-			  			 SecretKey cle = keygenerator.generateKey();
+		            KeyGenerator keygenerator;
+				      
+			  		JCEKeyGenerator aa=new JCEKeyGenerator("camellia", 256, new CipherKeyGenerator());
+					SecretKey cle=aa.engineGenerateKey();
 			  			 String aeskey= Base64.getUrlEncoder().encodeToString(cle.getEncoded());
 			  			 final SecretKeySpec keySpec = new SecretKeySpec(secretKey, "DES");
 				            final Cipher        cipher  = Cipher.getInstance("DES/ECB/PKCS5Padding");
@@ -397,7 +321,7 @@ public class KeyController {
 		    	public String getKey22() throws NoSuchProviderException, NoSuchPaddingException{
 		      	  KeyGenerator keygenerator;
 		      
-		  		JCEKeyGenerator aa=new JCEKeyGenerator("aria", 256, new CipherKeyGenerator());
+		  		JCEKeyGenerator aa=new JCEKeyGenerator("camellia", 256, new CipherKeyGenerator());
 				SecretKey cleasd=aa.engineGenerateKey();
 				System.out.println(bytesToHex(cleasd.getEncoded()));
 				
