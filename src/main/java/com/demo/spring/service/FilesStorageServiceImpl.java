@@ -220,9 +220,9 @@ public int Cyptage(String path,String algo,String pathrep,String shaChecksum,Str
         InputStream in = (InputStream) channel.getInputStream();
        
        
-	    if(algo.equals("3DES/BLOWFISH")){
+	    if(algo.equals("ARIA/BLOWFISH")){
         channel.setCommand( "sudo /home/sftp_user/chiff1.sh "+path+" "+pathrep+" "+shaChecksum+" "+aa+" "+bb);}
-	    if(algo.equals("AES/DES")){
+	    if(algo.equals("AES/CAMILLIA")){
 	        channel.setCommand( "sudo /home/sftp_user/chiff2.sh "+path+" "+pathrep+" "+shaChecksum+" "+aa+" "+bb );}
         System.out.println("azerty=="+path);
       

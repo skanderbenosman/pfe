@@ -119,18 +119,25 @@ public class ImageUploadController {
 	
 	@GetMapping(path = { "/getaaa123/{id}" })
 	public String sssss(@PathVariable("id") long id) throws Exception  {
+		
 		final Optional<ImageModel> retrievedImage = imageRepository.findByIduser(id);
 		ImageModel img = new ImageModel(retrievedImage.get().getName(),
 		retrievedImage.get().getType(),retrievedImage.get().getIduser(),
 		retrievedImage.get().getPicByte());
-		
+	
 		Path path = Paths.get("uploads/"+img.getIduser()+"/"+img.getName());
+		Path path2 = Paths.get("uploads/"+img.getIduser());
+		if (!Files.exists(path2)) {
+            Files.createDirectories(path2);
+        }
 		Files.write(path, img.getPicByte());
+	
 		String bb=delsb.aa("uploads/"+img.getIduser()+"/"+img.getName());
 		
 		Files.delete(path);
+		Files.delete(path2);
 		return bb;
-	
+		
 	}
 	  public static String bytesToHex(byte[] bytes) {
   	    StringBuilder sb = new StringBuilder();
